@@ -1,3 +1,4 @@
+/* style.css */
 :root {
   --primary: #6366f1;
   --primary-dark: #4f46e5;
@@ -245,6 +246,20 @@ section {
   opacity: 0;
   transform: translateY(30px);
   animation: fadeInUp 1.2s ease forwards 0.5s;
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.hero h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, #00c9ff, #92fe9d);
+  border-radius: 2px;
 }
 
 .accent-text {
