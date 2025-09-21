@@ -168,12 +168,22 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
   const data = Object.fromEntries(formData.entries());
   
   try {
-    // In a real application, you would send this data to a server
-    // For demonstration, we'll simulate a successful response
-    setTimeout(() => {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    const result = await response.json();
+    
+    if (result.ok) {
       alert("✅ Message sent! I'll get back to you soon.");
       form.reset();
-    }, 1000);
+    } else {
+      alert("⚠️ There was an error sending your message. Please try again.");
+    }
   } catch(err) { 
     alert("⚠️ There was an error sending your message. Please try again."); 
     console.error(err); 
@@ -187,12 +197,22 @@ document.getElementById("feedbackForm").addEventListener("submit", async (e) => 
   const data = Object.fromEntries(formData.entries());
   
   try {
-    // In a real application, you would send this data to a server
-    // For demonstration, we'll simulate a successful response
-    setTimeout(() => {
+    const response = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    const result = await response.json();
+    
+    if (result.ok) {
       alert("✅ Feedback sent! Thank you for your input.");
       form.reset();
-    }, 1000);
+    } else {
+      alert("⚠️ There was an error sending your feedback. Please try again.");
+    }
   } catch(err) { 
     alert("⚠️ There was an error sending your feedback. Please try again."); 
     console.error(err); 
