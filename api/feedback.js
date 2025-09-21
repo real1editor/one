@@ -1,31 +1,70 @@
-const fetch = require('node-fetch');
+// api/feedback.js
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-module.exports = async (req, res) => {
-  if (req.method !== 'POST') return res.status(405).json({error: 'method'});
+  // Get environment variables
   const BOT_TOKEN = process.env.BOT_TOKEN;
-  const ADMIN_CHAT = process.env.ADMIN_CHAT_ID;
-  if (!BOT_TOKEN || !ADMIN_CHAT) return res.status(500).json({error: 'missing env'});
-
-  const { name, email, message } = req.body || {};
-  const date = new Date().toLocaleString('en-GB', { timeZone: 'UTC' });
-
-  const text = `💡 *Feedback / Suggestion*\n\n` +
-    `👤 *From:* ${name || 'Anonymous'}\n` +
-    `📧 *Email:* ${email || '-'}\n` +
-    `💬 *Message:* ${message || '-'}\n\n` +
-    `⏱ _UTC_: ${date}`;
+  const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID;
+  
+  // Check if environment variables are set
+  if (!BOT_TOKEN || !ADMIN_CHAT_ID) {
+    console.error('Missing environment variables: BOT_TOKEN or ADMIN_CHAT_ID');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
 
   try {
-    const tg = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ chat_id: ADMIN_CHAT, text, parse_mode: 'Markdown' })
+    // Parse the request body
+    const { name, email, message } = req.body;
+    
+    // Validate required fields
+    if (!message) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    // Format the current date and time
+    const date = new Date().toLocaleString('en-GB', { 
+      timeZone: 'UTC',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
-    const j = await tg.json();
-    if (!j.ok) return res.status(500).json({error: 'tg failed', detail: j});
-    return res.json({ok: true});
-  } catch(err) {
-    console.error(err);
-    return res.status(500).json({error: 'server error'});
+
+    // Create the Telegram message
+    const telegramMessage = `💡 *New Feedback Submission*\n\n` +
+      `👤 *Name:* ${name || 'Not provided'}\n` +
+      `📧 *Email:* ${email || 'Not provided'}\n` +
+      `💬 *Feedback:* ${message}\n` +
+      `\n⏱ _UTC_: ${date}`;
+
+    // Send message to Telegram
+    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: ADMIN_CHAT_ID,
+        text: telegramMessage,
+        parse_mode: 'Markdown',
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.ok) {
+      console.error('Telegram API error:', data);
+      return res.status(500).json({ error: 'Failed to send notification' });
+    }
+
+    // Return success response
+    return res.status(200).json({ ok: true });
+  } catch (error) {
+    console.error('Server error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
-};
+}
