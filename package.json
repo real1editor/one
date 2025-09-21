@@ -1,16 +1,18 @@
 {
-  "name": "real1editor-website",
-  "version": "1.0.0",
-  "description": "Professional website for Real1Editor video editing services",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.7"
-  },
-  "devDependencies": {
-    "vercel": "^28.4.0"
-  }
+  "name": "real1editor-website",
+  "version": "1.0.0",
+  "description": "Professional website for Real1Editor video editing services",
+  "main": "app.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "mkdir -p public && cp *.html *.css *.js public/ 2>/dev/null || true",
+    "deploy": "vercel --prod",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "vercel": "^28.4.0"
+  }
 }
