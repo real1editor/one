@@ -2,15 +2,30 @@
   "name": "real1editor-website",
   "version": "1.0.0",
   "description": "Professional website for Real1Editor video editing services",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel --prod"
+    "build": "echo 'No build process needed for static site'",
+    "deploy": "vercel --prod",
+    "start": "npm run dev"
   },
+  "keywords": [
+    "video-editing",
+    "portfolio",
+    "creative-services",
+    "freelance",
+    "telegram-bot",
+    "vercel"
+  ],
+  "author": "Real1Editor",
+  "license": "MIT",
   "dependencies": {
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "vercel": "^28.4.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
