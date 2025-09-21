@@ -16,7 +16,7 @@ const PORTFOLIO = [
     title: "Reels - Before/After", 
     url: "https://instagram.com/p/xxx",
     category: "tiktok",
-    image: "https://images.unsplash.com/photo-1611746869696-4c17d1c118361?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    image: "https://images.unsplash.com/photo-1611746869696-4c17d1c11836?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
   },
   {
     title: "Commercial Ad - Tech Company", 
@@ -43,6 +43,8 @@ const hamburger = document.querySelector(".hamburger");
 const navMenu = document.querySelector(".nav-menu");
 const themeToggle = document.getElementById("theme-toggle");
 const themeIcon = themeToggle.querySelector("i");
+const backToTopButton = document.querySelector(".back-to-top");
+const navbar = document.querySelector(".navbar");
 
 // Mobile Menu Toggle
 hamburger.addEventListener("click", () => {
@@ -58,33 +60,32 @@ document.querySelectorAll(".nav-link").forEach(n => n.addEventListener("click", 
 
 // Theme Toggle
 themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
+  document.body.classList.toggle("light-mode");
   
-  if (document.body.classList.contains("dark-mode")) {
+  if (document.body.classList.contains("light-mode")) {
     themeIcon.classList.remove("fa-moon");
     themeIcon.classList.add("fa-sun");
-    localStorage.setItem("theme", "dark");
+    localStorage.setItem("theme", "light");
   } else {
     themeIcon.classList.remove("fa-sun");
     themeIcon.classList.add("fa-moon");
-    localStorage.setItem("theme", "light");
+    localStorage.setItem("theme", "dark");
   }
 });
 
 // Check for saved theme preference
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark-mode");
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light-mode");
   themeIcon.classList.remove("fa-moon");
   themeIcon.classList.add("fa-sun");
 }
 
 // Sticky Navbar
 window.addEventListener("scroll", () => {
-  const header = document.querySelector("header");
   if (window.scrollY > 100) {
-    header.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.1)";
+    navbar.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.1)";
   } else {
-    header.style.boxShadow = "var(--shadow)";
+    navbar.style.boxShadow = "none";
   }
 });
 
@@ -92,14 +93,11 @@ window.addEventListener("scroll", () => {
 const portfolioGrid = document.getElementById("portfolioGrid");
 PORTFOLIO.forEach((item, index) => {
   const portfolioItem = document.createElement("div");
-  portfolioItem.className = "portfolio-item fade-in";
+  portfolioItem.className = "portfolio-item";
   portfolioItem.setAttribute("data-category", item.category);
   portfolioItem.innerHTML = `
     <div class="portfolio-image">
       <img src="${item.image}" alt="${item.title}" loading="lazy">
-      <div class="portfolio-overlay">
-        <i class="fas fa-play-circle fa-3x"></i>
-      </div>
     </div>
     <div class="portfolio-info">
       <h3>${item.title}</h3>
@@ -145,19 +143,20 @@ filterButtons.forEach(button => {
 });
 
 // Scroll Animation
-const fadeElements = document.querySelectorAll(".fade-in");
+const animatedElements = document.querySelectorAll('.feature-card, .service-card, .testimonial-card, .portfolio-item');
 
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
     }
   });
 }, {
   threshold: 0.1
 });
 
-fadeElements.forEach(element => {
+animatedElements.forEach(element => {
   observer.observe(element);
 });
 
@@ -165,23 +164,18 @@ fadeElements.forEach(element => {
 document.getElementById("contactForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
-  const data = Object.fromEntries(new FormData(form).entries());
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
   
   try {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    });
-    const j = await res.json();
-    if (j.ok) { 
-      alert("✅ Message sent!"); 
-      form.reset(); 
-    } else {
-      alert("❌ Error: " + (j.error || "server"));
-    }
+    // In a real application, you would send this data to a server
+    // For demonstration, we'll simulate a successful response
+    setTimeout(() => {
+      alert("✅ Message sent! I'll get back to you soon.");
+      form.reset();
+    }, 1000);
   } catch(err) { 
-    alert("⚠️ Network error"); 
+    alert("⚠️ There was an error sending your message. Please try again."); 
     console.error(err); 
   }
 });
@@ -189,47 +183,47 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
 document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const form = e.target;
-  const data = Object.fromEntries(new FormData(form).entries());
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
   
   try {
-    const res = await fetch("/api/feedback", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(data)
-    });
-    const j = await res.json();
-    if (j.ok) { 
-      alert("✅ Feedback sent! Thank you."); 
-      form.reset(); 
-    } else {
-      alert("❌ Error: " + (j.error || "server"));
-    }
+    // In a real application, you would send this data to a server
+    // For demonstration, we'll simulate a successful response
+    setTimeout(() => {
+      alert("✅ Feedback sent! Thank you for your input.");
+      form.reset();
+    }, 1000);
   } catch(err) { 
-    alert("⚠️ Network error"); 
+    alert("⚠️ There was an error sending your feedback. Please try again."); 
     console.error(err); 
   }
 });
 
-// Lazy Loading Images
-if ("loading" in HTMLImageElement.prototype) {
-  // Native lazy loading is supported
-  const images = document.querySelectorAll('img[loading="lazy"]');
-  images.forEach(img => {
-    img.src = img.src;
-  });
-} else {
-  // Fallback for browsers that don't support lazy loading
-  // You could dynamically import a lazy loading library here if needed
-}
+// Newsletter Form
+document.querySelector(".newsletter-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.querySelector('input[type="email"]').value;
+  
+  try {
+    // In a real application, you would send this data to a server
+    // For demonstration, we'll simulate a successful response
+    setTimeout(() => {
+      alert("✅ Thank you for subscribing to our newsletter!");
+      form.reset();
+    }, 1000);
+  } catch(err) { 
+    alert("⚠️ There was an error with your subscription. Please try again."); 
+    console.error(err); 
+  }
+});
 
 // Back to top button
-const backToTopButton = document.querySelector(".back-to-top");
-
 window.addEventListener("scroll", () => {
   if (window.pageYOffset > 300) {
-    backToTopButton.classList.add("show");
+    backToTopButton.classList.add("visible");
   } else {
-    backToTopButton.classList.remove("show");
+    backToTopButton.classList.remove("visible");
   }
 });
 
@@ -240,7 +234,25 @@ backToTopButton.addEventListener("click", () => {
   });
 });
 
-// Entrance animations
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
+// Initialize animations on page load
 document.addEventListener("DOMContentLoaded", function() {
   // Add animation classes to elements
   const heroContent = document.querySelector(".hero-content");
@@ -248,38 +260,41 @@ document.addEventListener("DOMContentLoaded", function() {
     heroContent.classList.add("animate-up");
   }
   
+  // Animate section titles
   const sectionTitles = document.querySelectorAll(".section-title");
   sectionTitles.forEach((title, index) => {
-    title.classList.add("animate-up");
     title.style.animationDelay = `${0.2 + index * 0.1}s`;
   });
   
+  // Animate about section
   const aboutImage = document.querySelector(".about-image");
-  if (aboutImage) {
-    aboutImage.classList.add("animate-left");
-  }
-  
   const aboutText = document.querySelector(".about-text");
-  if (aboutText) {
-    aboutText.classList.add("animate-right");
+  if (aboutImage && aboutText) {
+    aboutImage.style.animationDelay = "0.3s";
+    aboutText.style.animationDelay = "0.5s";
   }
   
+  // Animate feature cards
   const featureCards = document.querySelectorAll(".feature-card");
   featureCards.forEach((card, index) => {
-    card.classList.add("animate-up");
     card.style.animationDelay = `${0.3 + index * 0.1}s`;
   });
   
+  // Animate service cards
   const serviceCards = document.querySelectorAll(".service-card");
   serviceCards.forEach((card, index) => {
-    card.classList.add("animate-up");
+    card.style.animationDelay = `${0.3 + index * 0.1}s`;
+  });
+  
+  // Animate testimonial cards
+  const testimonialCards = document.querySelectorAll(".testimonial-card");
+  testimonialCards.forEach((card, index) => {
     card.style.animationDelay = `${0.3 + index * 0.1}s`;
   });
   
   // Animate social links
   const socialLinks = document.querySelectorAll(".social-links a");
   socialLinks.forEach((link, index) => {
-    link.classList.add("animate-up");
     link.style.animationDelay = `${0.3 + index * 0.1}s`;
   });
 });
